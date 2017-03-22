@@ -1,0 +1,116 @@
+﻿@using Microsoft.AspNet.WebHooks;
+@{
+    ViewBag.Title = "Test";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+<hr />
+<div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="event"> Event</label>
+            <select id="event" class="form-control" required>
+                <option value=""></option>
+                @if (ViewBag.Filters != null)
+                {
+                    foreach (WebHookFilter item in ViewBag.Filters)
+                    {
+                        <option value="@item.Name">@item.Description</option>
+                    }
+                }
+
+
+            </select>
+
+        </div>
+
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="data"> Data</label>
+            <textarea id="data" class="form-control" cols="40" rows="5" required></textarea>
+
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="notifyTo"> Notify To</label>
+            <select id="notifyTo" class="form-control">
+                <option value="">Me</option>
+                <option value="All">All</option>
+                <option value="User">User</option>
+            </select>
+            <input type="text" value="" id="usernames" placeholder="Insert comma separated usernames" style="display:none" />
+        </div>
+    </div>
+    <div class="col-md-1">
+        <label for="send"></label>
+        <button class="btn btn-primary" onclick="send()" id="send"><i class="fa fa-send"></i> Send</button>
+    </div>
+
+
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#notifyTo").change(function () {
+                if ($(this).val() == 'User') {
+                    $("#usernames").show();
+                } else {
+                    $("#usernames").hide();
+                }
+            });
+
+        });
+        function send() {
+            var notifyTo = $("#notifyTo").val();
+            var data = $("#data").val();
+            var eventName = $("#event").val();
+
+            if (notifyTo == "User") {
+                var users = $("#usernames").val();
+                if ($.trim(users) == '') {
+                    toastr.error('Insert users!');
+                    $("#usernames").focus();
+                    return;
+                } else {
+                    notifyTo = users;
+                }
+            }
+
+
+            $.ajax({
+                url: "/api/notifyapi/SendWebHook",
+                    type: "POST",
+                    data: JSON.stringify({
+                        EventName: eventName,
+                        JsonData: data,
+                        Users: notifyTo.split(',')
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    done: function () {
+                        console.log("OK");
+                        toastr.success('Sended', 'OK');
+                    }, success: function () {
+                        console.log("OK");
+                        toastr.success('Sended', 'OK');
+                    }, error: function (request, status, error) {
+                        console.log(request.responseText.Message);
+                        if (request.status == 200) {
+                            toastr.success('Sended', 'OK');
+                        } else {
+                            toastr.error(request.responseText.Message, 'Error!');
+                        }
+                        
+                    }
+
+                });
+
+
+        }
+
+    </script>
+
+}

@@ -1,0 +1,123 @@
+﻿@using Microsoft.AspNet.WebHooks;
+@using System.Collections.ObjectModel;
+@model Collection<WebHook>
+
+@{
+    ViewBag.Title = "WebHooks List";
+}
+<style>
+    .tableHeader {
+    background-color:#E95420; 
+    color:white;
+    margin-bottom:6px;
+    height:20px;
+    }
+
+</style>
+
+<h2>@ViewBag.Title.</h2>
+<button class="btn btn-danger" onclick="javascript:deleteALL()"><i class="fa fa-trash"></i> Delete All</button> 
+
+<h3>@ViewBag.Message</h3>
+
+
+<div id="webhooks" class="container-fluid">
+    
+   
+</div>
+@section scripts{
+   <script type="text/javascript">
+       $(document).ready(function () {
+      
+           getWebHooks();
+
+       });
+
+  
+       function getWebHooks() {
+           $.ajax({
+               url: "/api/webhooks/registrations",
+               type: "GET",
+               contentType: "application/json; charset=utf-8",
+               dataType: "json",
+               success: function (webhooks) {
+                   showWebHooks(webhooks);
+               }, error: function (request, status, error) {
+
+                   console.log(request.responseText.Message);
+                   toastr.error(request.responseText.Message, 'Error!');
+
+               }
+
+           });
+
+       }
+
+       function deleteALL() {
+           if (confirm('Sei sicuro di voler eliminare tutti i webhooks?')) {
+               $.ajax({
+                   url: "/api/webhooks/registrations",
+                   type: "DELETE",
+                   //contentType: "application/json; charset=utf-8",
+                   //dataType: "json",
+                   success: function () {
+                       toastr.success('OK!');
+                       getWebHooks();
+                   }, error: function (request, status, error) {
+
+                       console.log(request.responseText.Message);
+                       toastr.error(request.responseText.Message, 'Error!');
+
+                   }
+
+               });
+           }
+
+
+       }
+
+       function deleteWebHook(id,name) {
+           //alert(id);
+           if (confirm('Sei sicuro di voler eliminare il webhook ' + name + '?')) {
+               $.ajax({
+                   url: "/api/webhooks/registrations",
+                   type: "DELETE",
+                   data: {Id: id},
+                   //contentType: "application/json; charset=utf-8",
+                   //dataType: "json",
+                   success: function () {
+                       toastr.success('OK!');
+                   }, error: function (request, status, error) {
+
+                       console.log(request.responseText.Message);
+                       toastr.error(request.responseText.Message, 'Error!');
+
+                   }
+
+               });
+           }
+
+
+       }
+
+
+       
+       
+
+       function showWebHooks(webhooks) {
+           $("#webhooks").html('');
+           if (webhooks.length > 0) {
+               $("#webhooks").append('<div class="row tableHeader"><div class="col-md-1 control-label">Id</div><div class="col-md-5 control-label">Url</div><div class="col-md-3">Description</div><div class="col-md-3">Events</div></div>');
+           }
+           for (i = 0; i < webhooks.length; i++) {
+               $("#webhooks").append('<div class="row"><div class="col-md-1"><button class="btn btn-danger btn-sm" onclick="javascript:deleteWebHook(\'' + webhooks[i].Id + '\',\'' + webhooks[i].Description + '\')"><i class="fa fa-trash"></i> Delete</button></div><div class="col-md-5">' + webhooks[i].WebHookUri + '</div><div class="col-md-3">' + webhooks[i].Description + '</div><div class="col-md-3">' + webhooks[i].Filters + '</div></div>');
+
+           }
+
+
+
+       }
+
+</script> 
+    }
+

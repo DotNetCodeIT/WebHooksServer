@@ -1,0 +1,115 @@
+﻿@using Microsoft.AspNet.WebHooks;
+@using System.Collections.ObjectModel;
+@model Collection<WebHookFilter>
+
+@{
+    ViewBag.Title = "Register";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+<form id="frmRegistration">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="receiverUrl">Receiver Url:</label>
+                <input type="text" name="receiverUrl" id="receiverUrl" class="form-control" required value="" placeholder="Receiver URL" />
+            </div>
+
+            <div class="form-group">
+                <label for="receiverKey">Secret:</label>
+                <input type="text" name="secretKey" id="secretKey" class="form-control" required value="@Guid.NewGuid()" placeholder="Secret Key" />
+            </div>
+            <div class="form-group">
+                <label for="receiverKey">Description:</label>
+                <input type="text" name="description" id="description" class="form-control" value="" placeholder="Description" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="filters">Eventi:</label>
+
+            </div>
+            <div class="row">
+
+                @foreach (var item in Model)
+            {
+                    <div class="form-group col-md-6">
+
+                        <input type="checkbox" name="filters" class="filter" id="filters" value="@item.Name" />
+                        <label>@item.Description</label>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </div>
+
+
+    <div id="webhooks"></div>
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#frmRegistration").submit(function (e) {
+                e.preventDefault();
+
+                var receiverUrl = $("#receiverUrl").val();
+                var secretKey = $("#secretKey").val();
+                var description = $("#description").val();
+                //var filters = $("#filters").val();
+                var filters = [];
+                $('.filter:checked').each(function () {
+                    filters.push(this.value);
+                });
+
+                //NOECHO per registrazione
+                if (receiverUrl.indexOf('?') > 0) {
+                    receiverUrl = receiverUrl + '&NoEcho=true'
+                } else {
+                    receiverUrl = receiverUrl + '?NoEcho=true'
+                }
+
+                registerWebHooks(receiverUrl, secretKey, description, filters);
+
+            });
+       
+        });
+
+        function registerWebHooks(url, secret, description, events) {
+            $.ajax({
+                url: "/api/webhooks/registrations",
+                type: "POST",
+                data: JSON.stringify({
+                    WebHookUri: url,
+                    Secret: secret,
+                    Description: description,
+                    Filters: events
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function () {
+                    console.log("OK");
+                    toastr.success('WebHook ' + description + ' registred!', 'OK');
+                    getWebHooks();
+                }, error: function (request, status, error) {
+
+                    console.log(request.responseText.Message);
+                    toastr.error(request.responseText.Message, 'Error!');
+
+                }
+
+            });
+
+        }
+
+       
+    </script>
+}
+

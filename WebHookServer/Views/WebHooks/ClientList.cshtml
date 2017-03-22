@@ -1,0 +1,77 @@
+﻿@using Microsoft.AspNet.WebHooks;
+@using System.Collections.ObjectModel;
+@model Collection<WebHookFilter>
+
+@{
+    ViewBag.Title = "Register";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+<button class="btn btn-warning" onclick="javascript:deleteALL()">Delete ALL</button>
+
+<div id="webhooks"></div>
+@section scripts{
+   <script type="text/javascript">
+       $(document).ready(function () {
+      
+           getWebHooks();
+
+       });
+
+  
+       function getWebHooks() {
+           $.ajax({
+               url: "/api/webhooks/registrations",
+               type: "GET",
+               contentType: "application/json; charset=utf-8",
+               dataType: "json",
+               success: function (webhooks) {
+                   showWebHooks(webhooks);
+               }, error: function (request, status, error) {
+
+                   console.log(request.responseText.Message);
+                   toastr.error(request.responseText.Message, 'Error!');
+
+               }
+
+           });
+
+       }
+
+       function deleteALL() {
+           if (confirm('Sei sicuro di voler eliminare tutti i webhooks?')) {
+               $.ajax({
+                   url: "/api/webhooks/registrations",
+                   type: "DELETE",
+                   //contentType: "application/json; charset=utf-8",
+                   //dataType: "json",
+                   success: function () {
+                       toastr.success('OK!');
+                   }, error: function (request, status, error) {
+
+                       console.log(request.responseText.Message);
+                       toastr.error(request.responseText.Message, 'Error!');
+
+                   }
+
+               });
+           }
+          
+
+       }
+
+
+       function showWebHooks(webhooks) {
+           $("#webhooks").html('');
+         
+           for (i = 0; i < webhooks.length; i++) {
+               $("#webhooks").append("<h2>" + webhooks[i].Description + "</h2><h3>Id " + webhooks[i].Id +"<h3>");
+           }
+
+
+
+       }
+
+</script> 
+    }
+
