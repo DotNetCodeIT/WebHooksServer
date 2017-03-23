@@ -80,13 +80,14 @@
            //alert(id);
            if (confirm('Sei sicuro di voler eliminare il webhook ' + name + '?')) {
                $.ajax({
-                   url: "/api/webhooks/registrations",
+                   url: "/api/webhooks/registrations/" + id,
                    type: "DELETE",
-                   data: {Id: id},
+                   data: {id: id},
                    //contentType: "application/json; charset=utf-8",
                    //dataType: "json",
                    success: function () {
                        toastr.success('OK!');
+                       getWebHooks();
                    }, error: function (request, status, error) {
 
                        console.log(request.responseText.Message);

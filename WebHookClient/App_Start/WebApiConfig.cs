@@ -19,6 +19,9 @@ namespace WebHookClient
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            // Initialize Custom WebHook receiver
+            config.InitializeReceiveCustomWebHooks();
         }
     }
 }
