@@ -16,8 +16,6 @@ namespace WebHookServer.Controllers
     {
         [HttpPost]
         [Route("SendWebHook")]
-        //[Route("api/user/login")]
-        //[ActionName("SendWebHook")]
         public async Task<IHttpActionResult> SendWebHook(WebHookEventModel eventData)
         {
             if (eventData.Users.Count == 0 || eventData.Users.Contains("")) {
@@ -33,14 +31,11 @@ namespace WebHookServer.Controllers
                 else
                 {
                     //Send payload to all selected users
-                    await this.NotifyAllAsync(eventData.EventName, JsonConvert.DeserializeObject(eventData.JsonData),(WebHook,user)=> eventData.Users.Find(u=> u.ToLowerInvariant()== user.ToLowerInvariant()).Count()>0);
+                    await this.NotifyAllAsync(eventData.EventName, JsonConvert.DeserializeObject(eventData.JsonData)
+                                                                 ,(WebHook,user)=>  eventData.Users.Contains(user));
                 }
             }
             return Ok(true);
-           
         }
-
-       
-
     }
 }

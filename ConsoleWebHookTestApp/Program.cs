@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace ConsoleTestApp
+namespace ConsoleWebHookTestApp
 {
     class Program
     {
@@ -34,10 +37,10 @@ namespace ConsoleTestApp
                     }
                 }
                 Console.WriteLine("Scrivi exit per uscire");
-            } while (Console.ReadLine()!="exit");
-          
+            } while (Console.ReadLine() != "exit");
 
-            
+
+
 
         }
     }

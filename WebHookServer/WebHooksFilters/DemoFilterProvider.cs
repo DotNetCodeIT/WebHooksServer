@@ -12,10 +12,10 @@ namespace WebHookServer.WebHooksFilters
     {
         private readonly Collection<WebHookFilter> filters = new Collection<WebHookFilter>
     {
-        new WebHookFilter { Name = "notifica", Description = "Notifica"},
-        new WebHookFilter { Name = "errore", Description = "Errore"},
-        new WebHookFilter { Name = "inizioElaborazione", Description = "Inizio Elaborazione"},
-        new WebHookFilter { Name = "fineElaborazione", Description = "Fine Elaborazione"},
+        new WebHookFilter { Name = "Notifica", Description = "Notifica"},
+        new WebHookFilter { Name = "Errore", Description = "Errore"},
+        new WebHookFilter { Name = "InizioElaborazione", Description = "Inizio Elaborazione"},
+        new WebHookFilter { Name = "FineElaborazione", Description = "Fine Elaborazione"},
     };
 
         public Task<Collection<WebHookFilter>> GetFiltersAsync()

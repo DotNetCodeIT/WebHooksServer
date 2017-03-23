@@ -21,10 +21,10 @@
 <h3>@ViewBag.Message</h3>
 
 
-<div id="webhooks" class="container-fluid">
-    
-   
-</div>
+<div id="webhooks" class="container-fluid"></div>
+
+<table id="webhookstable" class="table table-responsive table table-striped table-hover ">
+</table>
 @section scripts{
    <script type="text/javascript">
        $(document).ready(function () {
@@ -100,12 +100,8 @@
 
 
        }
-
-
        
-       
-
-       function showWebHooks(webhooks) {
+       function showWebHooks2(webhooks) {
            $("#webhooks").html('');
            if (webhooks.length > 0) {
                $("#webhooks").append('<div class="row tableHeader"><div class="col-md-1 control-label">Id</div><div class="col-md-5 control-label">Url</div><div class="col-md-3">Description</div><div class="col-md-3">Events</div></div>');
@@ -115,8 +111,18 @@
 
            }
 
-
-
+       }
+       function showWebHooks(webhooks) {
+           $("#webhookstable").html('');
+           if (webhooks.length > 0) {
+               $("#webhookstable").append('<thead><th></th><th>Description</th><th>Url</th><th>Events</th></tr></thead>');
+           }
+           $("#webhookstable").append('<tbody>');
+           for (i = 0; i < webhooks.length; i++) {
+               $("#webhookstable").append('<tr><td><button class="btn btn-danger btn-sm" onclick="javascript:deleteWebHook(\'' + webhooks[i].Id + '\',\'' + webhooks[i].Description + '\')"><i class="fa fa-trash"></i> Delete</button></td><td>' + webhooks[i].Description + '</td><td>' + webhooks[i].WebHookUri + '</td><td>' + webhooks[i].Filters + '</td></tr>');
+               
+           }
+           $("#webhookstable").append('</tbody>');
        }
 
 </script> 
