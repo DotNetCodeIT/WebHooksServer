@@ -16,6 +16,18 @@ namespace WebHookServer.Controllers
 {
     public class WebHooksController : Controller
     {
+      
+        [Authorize]
+        public async Task<ActionResult> Register()
+        {
+            ViewBag.Message = "WebHooks Register";
+
+            DemoFilterProvider prov = new DemoFilterProvider();
+            Collection<WebHookFilter> list = await prov.GetFiltersAsync();
+
+            return View(list);
+        }
+
         // GET: WebHooks
         [Authorize]
         public async Task<ActionResult> Index()
@@ -23,24 +35,6 @@ namespace WebHookServer.Controllers
             ViewBag.Message = "WebHooks List";
 
             Collection<WebHook> list = new Collection<WebHook>();
-
-            //using (var client = new HttpClient())
-            //{
-
-            //    string url = "api/webhooks/registrations";
-
-            //    client.BaseAddress = new Uri(Request.Url.GetLeftPart(UriPartial.Authority));
-               
-            //    client.DefaultRequestHeaders.Accept.Clear();
-            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authorization", Request.Cookies[".AspNet.ApplicationCookie"].ToString());
-            //      var response = await client.GetAsync(url);
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        list = JsonConvert.DeserializeObject<Collection<WebHook>>(await client.GetStringAsync(url));
-            //    }
-            //}
-
 
             DemoFilterProvider prov = new DemoFilterProvider();
             Collection<WebHookFilter> filters = await prov.GetFiltersAsync();
@@ -61,16 +55,6 @@ namespace WebHookServer.Controllers
             return View();
         }
 
-        [Authorize]
-        public async Task<ActionResult> Register()
-        {
-            ViewBag.Message = "WebHooks Register";
-
-            DemoFilterProvider prov = new DemoFilterProvider();
-            Collection<WebHookFilter> list = await prov.GetFiltersAsync();
-
-            return View(list);
-        }
 
         [Authorize]
         public async Task<ActionResult> ClientList()
